@@ -18,6 +18,7 @@ kaplay({
 loadRoot('assets/');
 loadSprite("board", "temp/board.png");
 loadSprite("player", "player.png");
+loadSprite("block", "block.png");
 
 scene("main", () => {
     // Add the board background
@@ -36,6 +37,30 @@ scene("main", () => {
         area(),
         scale(SCALE),
     ]);
+
+    // Add temporary walls
+    const numRows = SCREEN_HEIGHT / (GRID_SIZE * SCALE);
+    for (let i = 0; i < numRows; i++) {
+        // Left wall
+        add([
+            sprite("block"),
+            pos(0, i * GRID_SIZE * SCALE),
+            scale(SCALE),
+            area(),
+            body(),
+            "block",
+        ]);
+
+        // Right wall
+        add([
+            sprite("block"),
+            pos(SCREEN_WIDTH - GRID_SIZE * SCALE, i * GRID_SIZE * SCALE),
+            scale(SCALE),
+            area(),
+            body(),
+            "block",
+        ]);
+    }
 
     // Movement logic for the player
     onKeyPress(["up", "w"], () => {
