@@ -2,16 +2,15 @@
 
 const VERSION = 'v.alpha.0.1';
 
-// Start the game with a scaled-up window and scaling factor
-const SCALE = 1.5; // Adjust this value to scale the game up
 const GRID_SIZE = 16;
+const TARGET_HEIGHT = 336;
+const SCALE = window.innerHeight / TARGET_HEIGHT;
 const SCREEN_WIDTH = 256 * SCALE;
 const SCREEN_HEIGHT = 336 * SCALE;
 
 kaplay({
     width: SCREEN_WIDTH,
     height: SCREEN_HEIGHT,
-    scale: SCALE,
     background: [250, 250, 250],
 });
 

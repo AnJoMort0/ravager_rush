@@ -1,0 +1,13 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden; /* Remove scrollbars */
+    height: 100%;
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+}
+
+canvas {
+    display: block; /* Ensure no extra space below canvas */
+}
