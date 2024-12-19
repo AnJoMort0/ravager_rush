@@ -22,9 +22,12 @@ kaplay({
     background: [250, 250, 250],
 });
 
+debug.inspect = true;
+
 //Assets
 loadRoot('assets/');
 loadSprite("board"          , "temp/board.png");
+loadSprite("blank_wall"     , "blank16x336.png");
 loadSprite("player"         , "player.png");
 loadSprite("blank16x16"     , "blank16x16.png");
 loadSprite("blocker"        , "blocker.png");
@@ -37,6 +40,45 @@ scene("main", () => {
         scale(SCALE),
         pos(0, 0),
     ]);
+    // Add walls
+    add([
+        sprite("blank_wall"),
+        scale(SCALE, SCALE * 1.5),
+        anchor("top"),
+        pos(at(0) + FIX, at(4)),
+        area(scale(0.5)),
+        "blocker",
+    ]);
+    add([
+        sprite("blank_wall"),
+        scale(SCALE, SCALE * 1.5),
+        anchor("top"),
+        pos(at(15) + FIX, at(4)),
+        area(scale(0.5)),
+        "blocker",
+    ]);
+    add([
+        sprite("blank_wall"),
+        scale(SCALE, SCALE * 1.3),
+        anchor("top"),
+        rotate(90),
+        pos(at(15), at(3) + FIX),
+        area(scale(0.5)),
+        "blocker",
+    ]);
+    add([
+        sprite("blank_wall"),
+        scale(SCALE, SCALE * 1.3),
+        anchor("top"),
+        rotate(90),
+        pos(at(15), at(20) + FIX),
+        area(scale(0.5)),
+        "blocker",
+    ]);
+    addBlocker(3, 4, 0); //top line
+    addBlocker(6, 4, 0); //top line
+    addBlocker(9, 4, 0); //top line
+    addBlocker(12, 4, 0); //top line
 
     // Add the player
     const player = add([
@@ -90,46 +132,28 @@ scene("main", () => {
             ]);
         }
     }
-
-        /////////THESE WALLS HAVE TO BE TEMPORARY BECAUSE THEY USE TOO MUCH PERFORMANCE. THEY NEED TO BE A SINGLE ELEMENT AND NOT A WHOLE BUNCH OF WALLS (execpt maybe between the frog doors)
-        // Add walls
-        const numRows = SCREEN_HEIGHT / (GRID_SIZE);
-        for (let i = 0; i < numRows; i++) { 
-            addBlocker(0  , i , 0); //left wall
-            addBlocker(15 , i , 0); //right wall
-        }
-        const numCols = SCREEN_WIDTH / (GRID_SIZE);
-        for (let i = 0; i < numCols; i++) {
-            addBlocker(i, 3, 0); //top line
-            addBlocker(3, 4, 0); //top line
-            addBlocker(6, 4, 0); //top line
-            addBlocker(9, 4, 0); //top line
-            addBlocker(12, 4, 0); //top line
-            addBlocker(i, 20, 0); //bottom line
-        }
-
-        // Add blocker obstacles
-        let blockerCoords = [
-            [18, [2, 3, 6, 10, 11, 14]],
-            [16, [3, 6, 7, 10, 13, 14]],
-            [14, [1, 2, 5, 8, 9, 13]],
-        ];
-        for (let i = 0; i < blockerCoords.length; i++) {
-            const YCoord = blockerCoords[i][0];
-            const XCoord = blockerCoords[i][1];
-        
-            for (let j = 0; j < XCoord.length; j++) {
-                const current   = XCoord[j];
-                const next      = XCoord[j + 1];
-        
-                if (next === current + 1) { // Check if there are consecutive blockers
-                    addBlocker(current, YCoord, Z_TOP, true);
-                    j++;
-                } else {
-                    addBlocker(current, YCoord, Z_TOP, false);
-                }
+    // Add blocker obstacles
+    let blockerCoords = [
+        [18, [2, 3, 6, 10, 11, 14]],
+        [16, [3, 6, 7, 10, 13, 14]],
+        [14, [1, 2, 5, 8, 9, 13]],
+    ];
+    for (let i = 0; i < blockerCoords.length; i++) {
+        const YCoord = blockerCoords[i][0];
+        const XCoord = blockerCoords[i][1];
+    
+        for (let j = 0; j < XCoord.length; j++) {
+            const current   = XCoord[j];
+            const next      = XCoord[j + 1];
+    
+            if (next === current + 1) { // Check if there are consecutive blockers
+                addBlocker(current, YCoord, Z_TOP, true);
+                j++;
+            } else {
+                addBlocker(current, YCoord, Z_TOP, false);
             }
-        }              
+        }
+    }              
 });
 
 go("main");
