@@ -36,6 +36,7 @@ loadSprite("blocker"        , "blocker.png");
 loadSprite("blocker_double" , "blocker_double.png");
 loadSprite("zombie"         , "zombie.png");
 loadSprite("ravager"        , "ravager.png");
+loadSprite("ravager_wet"    , "ravager_water.png");
 
 scene("main", () => {
     // Add the board background
@@ -224,6 +225,59 @@ scene("main", () => {
             "ravager",
         ]);
     })
+    loop(5, () => {
+        add([
+            sprite("ravager_wet", {flipX: true}),
+            scale(SCALE),
+            anchor("center"),
+            pos(at(0), at(11) + FIX),
+            z(Z_TOP),
+            area(scale(0.7)),
+            offscreen({destroy: true}),
+            "enemy",
+            "ravager",
+        ]);
+    })
+    loop(5, () => {
+        add([
+            sprite("ravager_wet"),
+            scale(SCALE),
+            anchor("center"),
+            pos(at(16), at(9) + FIX),
+            z(Z_TOP),
+            area(scale(0.7)),
+            offscreen({destroy: true}),
+            "enemy",
+            "ravager",
+        ]);
+    })
+    loop(5, () => {
+        add([
+            sprite("ravager_wet", {flipX: true}),
+            scale(SCALE),
+            anchor("center"),
+            pos(at(0), at(7) + FIX),
+            z(Z_TOP),
+            area(scale(0.7)),
+            offscreen({destroy: true}),
+            "enemy",
+            "ravager",
+        ]);
+    })
+    loop(5, () => {
+        add([
+            sprite("ravager_wet"),
+            scale(SCALE),
+            anchor("center"),
+            pos(at(16), at(5) + FIX),
+            z(Z_TOP),
+            area(scale(0.7)),
+            offscreen({destroy: true}),
+            "enemy",
+            "ravager",
+        ]);
+    })
+
     loop(0.5, () => {
         all17Ravagers = get("ravager");
         all17Ravagers.forEach(ravager => {
