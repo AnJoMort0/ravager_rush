@@ -32,6 +32,7 @@ loadSprite("player"         , "player.png");
 loadSprite("blank16x16"     , "blank16x16.png");
 loadSprite("blocker"        , "blocker.png");
 loadSprite("blocker_double" , "blocker_double.png");
+loadSprite("zombie"         , "zombie.png");
 
 scene("main", () => {
     // Add the board background
@@ -41,7 +42,7 @@ scene("main", () => {
         pos(0, 0),
     ]);
     // Add walls
-    add([
+    add([ //left
         sprite("blank_wall"),
         scale(SCALE, SCALE * 1.5),
         anchor("top"),
@@ -49,7 +50,7 @@ scene("main", () => {
         area(scale(0.5)),
         "blocker",
     ]);
-    add([
+    add([ //right
         sprite("blank_wall"),
         scale(SCALE, SCALE * 1.5),
         anchor("top"),
@@ -57,7 +58,7 @@ scene("main", () => {
         area(scale(0.5)),
         "blocker",
     ]);
-    add([
+    add([ //top
         sprite("blank_wall"),
         scale(SCALE, SCALE * 1.3),
         anchor("top"),
@@ -66,7 +67,7 @@ scene("main", () => {
         area(scale(0.5)),
         "blocker",
     ]);
-    add([
+    add([ //bottom
         sprite("blank_wall"),
         scale(SCALE, SCALE * 1.3),
         anchor("top"),
@@ -75,21 +76,25 @@ scene("main", () => {
         area(scale(0.5)),
         "blocker",
     ]);
-    addBlocker(3, 4, 0); //top line
-    addBlocker(6, 4, 0); //top line
-    addBlocker(9, 4, 0); //top line
-    addBlocker(12, 4, 0); //top line
+    addBlocker(3, 4, 0); //between doors
+    addBlocker(6, 4, 0); 
+    addBlocker(9, 4, 0);
+    addBlocker(12, 4, 0); 
 
     // Add the player
     const player = add([
         sprite("player"),
         scale(SCALE),
         pos(vec2(last_pos)),
+        z(Z_TOP),
         area(),
         "player",
     ]);
     player.onCollide("blocker", () => { //sets the player back to it's previous position when intercepting a blocker --> not letting them move
         player.pos = vec2(last_pos);
+    });
+    player.onCollide("enemy", () => {
+        console.log("dead");
     })
     onKeyPress(["up", "w"], () => {
         last_pos = [player.pos.x, player.pos.y];
@@ -153,7 +158,29 @@ scene("main", () => {
                 addBlocker(current, YCoord, Z_TOP, false);
             }
         }
-    }              
+    }
+
+    // Add zombie
+    const zombie = add([
+        sprite("zombie"),
+        scale(SCALE),
+        anchor("center"),
+        pos(at(1) + FIX, at(12) + FIX),
+        z(Z_TOP),
+        area(scale(0.7)),
+        "enemy",
+    ])
+    loop(1, () => {
+        // Zombie mouvement
+        if (player.pos.y > at(8) && player.pos.y < at(16)) {
+            if (zombie.pos.x > player.pos.x) {
+                zombie.pos.x -= at(1);
+            }
+            if (zombie.pos.x < player.pos.x){
+                zombie.pos.x += at(1)
+            }
+        }
+    })
 });
 
 go("main");
