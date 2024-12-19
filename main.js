@@ -15,6 +15,8 @@ const Z_TOP = 10;
 function at(square){return (GRID_SIZE * square)}; //function to ease the calculations of squares
 
 let last_pos        = [at(8), at(19)];
+let score           = 0;
+let crossings       = 0;
 
 kaplay({
     width: SCREEN_WIDTH,
@@ -33,6 +35,7 @@ loadSprite("blank16x16"     , "blank16x16.png");
 loadSprite("blocker"        , "blocker.png");
 loadSprite("blocker_double" , "blocker_double.png");
 loadSprite("zombie"         , "zombie.png");
+loadSprite("ravager"        , "ravager.png");
 
 scene("main", () => {
     // Add the board background
@@ -180,6 +183,56 @@ scene("main", () => {
                 zombie.pos.x += at(1)
             }
         }
+    })
+
+    loop(5, () => {
+        add([
+            sprite("ravager"),
+            scale(SCALE),
+            anchor("center"),
+            pos(at(16), at(17) + FIX),
+            z(Z_TOP),
+            area(scale(0.7)),
+            offscreen({destroy: true}),
+            "enemy",
+            "ravager",
+        ]);
+    })
+    loop(5, () => {
+        add([
+            sprite("ravager", {flipX: true}),
+            scale(SCALE),
+            anchor("center"),
+            pos(at(0), at(15) + FIX),
+            z(Z_TOP),
+            area(scale(0.7)),
+            offscreen({destroy: true}),
+            "enemy",
+            "ravager",
+        ]);
+    })
+    loop(5, () => {
+        add([
+            sprite("ravager"),
+            scale(SCALE),
+            anchor("center"),
+            pos(at(16), at(13) + FIX),
+            z(Z_TOP),
+            area(scale(0.7)),
+            offscreen({destroy: true}),
+            "enemy",
+            "ravager",
+        ]);
+    })
+    loop(0.5, () => {
+        all17Ravagers = get("ravager");
+        all17Ravagers.forEach(ravager => {
+            if (ravager.flipX == false) {
+                ravager.pos.x -= at(1);
+            } else {
+                ravager.pos.x += at(1);
+            }
+        });
     })
 });
 
