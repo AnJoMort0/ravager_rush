@@ -24,7 +24,7 @@ kaplay({
     background: [250, 250, 250],
 });
 
-debug.inspect = true;
+//debug.inspect = true;
 
 //Assets
 loadRoot('assets/');
@@ -34,6 +34,9 @@ loadSprite("player"         , "player.png");
 loadSprite("blank16x16"     , "blank16x16.png");
 loadSprite("blocker"        , "blocker.png");
 loadSprite("blocker_double" , "blocker_double.png");
+loadSprite("lilypad"        , "lilypad.png");
+loadSprite("drip_leaf"      , "drip_leaf.png");
+loadSprite("drip_leaf_wet"  , "drip_leaf_falling.png");
 loadSprite("zombie"         , "zombie.png");
 loadSprite("ravager"        , "ravager.png");
 loadSprite("ravager_wet"    , "ravager_water.png");
@@ -90,7 +93,7 @@ scene("main", () => {
         sprite("player"),
         scale(SCALE),
         pos(vec2(last_pos)),
-        z(Z_TOP),
+        z(Z_TOP + 10),
         area(),
         "player",
     ]);
@@ -117,7 +120,8 @@ scene("main", () => {
         player.pos.x += GRID_SIZE;
     });
 
-    //Add game elements
+ //Add game elements
+    // Add blocker obstacles
     function addBlocker (coorX, coorY, Z, isDouble){
         if (!isDouble) {
             add([
@@ -141,13 +145,12 @@ scene("main", () => {
             ]);
         }
     }
-    // Add blocker obstacles
     let blockerCoords = [
         [18, [2, 3, 6, 10, 11, 14]],
         [16, [3, 6, 7, 10, 13, 14]],
         [14, [1, 2, 5, 8, 9, 13]],
     ];
-    for (let i = 0; i < blockerCoords.length; i++) {
+    for (let i = 0; i < blockerCoords.length; i++) { // this loop was developped with the help of chatGPT
         const YCoord = blockerCoords[i][0];
         const XCoord = blockerCoords[i][1];
     
@@ -161,6 +164,37 @@ scene("main", () => {
             } else {
                 addBlocker(current, YCoord, Z_TOP, false);
             }
+        }
+    }
+
+    // Add lilypads
+    function addLilypad (coorX, coorY){
+        add([
+            sprite("lilypad"),
+            scale(SCALE),
+            anchor("center"),
+            pos(at(coorX) + FIX, at(coorY) + FIX),
+            z(Z_TOP),
+            area(scale(0.7)),
+            "floater",
+        ]);
+    }
+    let lilypadCoords = [
+        [5, [4, 12]],
+        [6, [6]],
+        [7, [9]],
+        [8, [2, 7]],
+        [9, [10]],
+        [10, [2, 6]],
+        [11, [13]],
+    ];
+    for (let i = 0; i < lilypadCoords.length; i++) {
+        const YCoord = lilypadCoords[i][0];
+        const XCoord = lilypadCoords[i][1];
+    
+        for (let j = 0; j < XCoord.length; j++) {
+            addLilypad(XCoord[j], YCoord);
+            j++;
         }
     }
 
