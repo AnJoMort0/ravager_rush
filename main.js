@@ -37,6 +37,7 @@ loadSprite("blocker_double" , "blocker_double.png");
 loadSprite("lilypad"        , "lilypad.png");
 loadSprite("drip_leaf"      , "drip_leaf.png");
 loadSprite("drip_leaf_wet"  , "drip_leaf_falling.png");
+loadSprite("drip_leaf_gone" , "drip_leaf_collapsed.png");
 loadSprite("zombie"         , "zombie.png");
 loadSprite("ravager"        , "ravager.png");
 loadSprite("ravager_wet"    , "ravager_water.png");
@@ -102,6 +103,23 @@ scene("main", () => {
     });
     player.onCollide("enemy", () => {
         console.log("dead");
+    });
+    player.onCollide("collapsable", (d) => {
+        if (d.is("collapsed")) {
+            return;
+        } else {
+            d.use(sprite("drip_leaf_wet"));
+            wait(1, () => {
+                d.use("collapsed");
+                d.use(sprite("drip_leaf_gone"));
+                d.unuse("floater");
+                wait(5, () => {
+                    d.unuse("collapsed");
+                    d.use(sprite("drip_leaf"));
+                    d.use("floater");
+                })
+            });
+        }
     })
     onKeyPress(["up", "w"], () => {
         last_pos = [player.pos.x, player.pos.y];
@@ -168,16 +186,31 @@ scene("main", () => {
     }
 
     // Add lilypads
-    function addLilypad (coorX, coorY){
-        add([
-            sprite("lilypad"),
-            scale(SCALE),
-            anchor("center"),
-            pos(at(coorX) + FIX, at(coorY) + FIX),
-            z(Z_TOP),
-            area(scale(0.7)),
-            "floater",
-        ]);
+    function addFloater (coorX, coorY, isDrip){
+        if (!isDrip) {
+            add([
+                sprite("lilypad"),
+                scale(SCALE),
+                rotate(choose([0, 90, 180, 270])),
+                anchor("center"),
+                pos(at(coorX) + FIX, at(coorY) + FIX),
+                z(Z_TOP),
+                area(scale(0.7)),
+                "floater",
+            ]);
+        } else {
+            add([
+                sprite("drip_leaf"),
+                scale(SCALE),
+                rotate(choose([0, 90, 180, 270])),
+                anchor("center"),
+                pos(at(coorX) + FIX, at(coorY) + FIX),
+                z(Z_TOP),
+                area(scale(0.7)),
+                "floater",
+                "collapsable",
+            ]);
+        }
     }
     let lilypadCoords = [
         [5, [4, 12]],
@@ -193,8 +226,24 @@ scene("main", () => {
         const XCoord = lilypadCoords[i][1];
     
         for (let j = 0; j < XCoord.length; j++) {
-            addLilypad(XCoord[j], YCoord);
-            j++;
+            addFloater(XCoord[j], YCoord, false);
+        }
+    }
+    let drip_leafCoords = [
+        [5, [2]],
+        [6, [7, 9, 14]],
+        [7, [3, 5, 11]],
+        [8, [1]],
+        [9, [4, 11]],
+        [10, [8, 14]],
+        [11, [1, 4, 5, 9]],
+    ];
+    for (let i = 0; i < drip_leafCoords.length; i++) {
+        const YCoord = drip_leafCoords[i][0];
+        const XCoord = drip_leafCoords[i][1];
+    
+        for (let j = 0; j < XCoord.length; j++) {
+            addFloater(XCoord[j], YCoord, true);
         }
     }
 
