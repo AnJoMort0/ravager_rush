@@ -43,6 +43,9 @@ loadSprite("ravager"        , "ravager.png");
 loadSprite("ravager_wet"    , "ravager_water.png");
 
 scene("main", () => {
+    let wetTime = 0;
+    let wetPenalty = 60; // in frames
+
     // Add the board background
     add([
         sprite("board"),
@@ -96,6 +99,18 @@ scene("main", () => {
         pos(vec2(last_pos)),
         z(Z_TOP + 10),
         area(),
+        {
+            update(){
+                if (this.pos.y < at(12) && get("floater").filter(o => o.isColliding(player)) == 0) {
+                    this.tag("wet");
+                    wetTime++;
+                } else {
+                    this.untag("wet");
+                    canMove = true;
+                    wetTime = 0;
+                }
+            }
+        },
         "player",
     ]);
     player.onCollide("blocker", () => { //sets the player back to it's previous position when intercepting a blocker --> not letting them move
@@ -104,39 +119,85 @@ scene("main", () => {
     player.onCollide("enemy", () => {
         console.log("dead");
     });
+    player.onCollide("floater", () => {
+        canMove = true;
+    })
     player.onCollide("collapsable", (d) => {
+        console.log("touched");
         if (d.is("collapsed")) {
+            console.log("collapsed");
             return;
         } else {
             d.use(sprite("drip_leaf_wet"));
             wait(1, () => {
-                d.use("collapsed");
+                d.tag("collapsed");
                 d.use(sprite("drip_leaf_gone"));
-                d.unuse("floater");
+                d.untag("floater");
                 wait(5, () => {
-                    d.unuse("collapsed");
+                    d.untag("collapsed");
                     d.use(sprite("drip_leaf"));
-                    d.use("floater");
+                    d.tag("floater");
                 })
             });
         }
-    })
+    });
+
     onKeyPress(["up", "w"], () => {
-        last_pos = [player.pos.x, player.pos.y];
-        player.pos.y -= GRID_SIZE;
+        if(player.is("wet")){
+            if (wetTime > wetPenalty) {
+                wetTime = 0;
+                last_pos = [player.pos.x, player.pos.y];
+                player.pos.y -= GRID_SIZE;
+            } else {
+                return;
+            };
+        } else {
+            last_pos = [player.pos.x, player.pos.y];
+            player.pos.y -= GRID_SIZE;
+        }
     });
     onKeyPress(["down", "s"], () => {
-        last_pos = [player.pos.x, player.pos.y];
-        player.pos.y += GRID_SIZE;
+        if(player.is("wet")){
+            if (wetTime > wetPenalty) {
+                wetTime = 0;
+                last_pos = [player.pos.x, player.pos.y];
+                player.pos.y += GRID_SIZE;
+            } else {
+                return;
+            };
+        } else {
+            last_pos = [player.pos.x, player.pos.y];
+            player.pos.y += GRID_SIZE;
+        }
     });
     onKeyPress(["left", "a"], () => {
-        last_pos = [player.pos.x, player.pos.y];
-        player.pos.x -= GRID_SIZE;
+        if(player.is("wet")){
+            if (wetTime > wetPenalty) {
+                wetTime = 0;
+                last_pos = [player.pos.x, player.pos.y];
+                player.pos.x -= GRID_SIZE;
+            } else {
+                return;
+            };
+        } else {
+            last_pos = [player.pos.x, player.pos.y];
+            player.pos.x -= GRID_SIZE;
+        }
     });
     onKeyPress(["right", "d"], () => {
-        last_pos = [player.pos.x, player.pos.y];
-        player.pos.x += GRID_SIZE;
-    });
+        if(player.is("wet")){
+            if (wetTime > wetPenalty) {
+                wetTime = 0;
+                last_pos = [player.pos.x, player.pos.y];
+                player.pos.x += GRID_SIZE;
+            } else {
+                return;
+            };
+        } else {
+            last_pos = [player.pos.x, player.pos.y];
+            player.pos.x += GRID_SIZE;
+        }
+    });    
 
  //Add game elements
     // Add blocker obstacles
@@ -362,8 +423,8 @@ scene("main", () => {
     })
 
     loop(0.5, () => {
-        all17Ravagers = get("ravager");
-        all17Ravagers.forEach(ravager => {
+        allRavagers = get("ravager");
+        allRavagers.forEach(ravager => {
             if (ravager.flipX == false) {
                 ravager.pos.x -= at(1);
             } else {
