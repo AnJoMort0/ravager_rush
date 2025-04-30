@@ -39,8 +39,23 @@ loadSprite("drip_leaf"      , "drip_leaf.png");
 loadSprite("drip_leaf_wet"  , "drip_leaf_falling.png");
 loadSprite("drip_leaf_gone" , "drip_leaf_collapsed.png");
 loadSprite("zombie"         , "zombie.png");
-loadSprite("ravager"        , "ravager.png");
-loadSprite("ravager_wet"    , "ravager_water.png");
+//loadSprite("ravager"        , "ravager.png");
+//loadSprite("ravager_wet"    , "ravager_water.png");
+
+loadSprite("ravager", "ravager_anim.png", {
+    sliceX: 1,
+    sliceY: 4,
+    anims: {
+        walk: { from: 0, to: 3, speed: 2, loop: true },
+    },
+});
+loadSprite("ravager_wet", "ravager_water_anim.png", {
+    sliceX: 1,
+    sliceY: 4,
+    anims: {
+        walk: { from: 0, to: 3, speed: 2, loop: true },
+    },
+});
 
 scene("main", () => {
     let wetTime = 0;
@@ -332,7 +347,7 @@ scene("main", () => {
 
     loop(5, () => {
         add([
-            sprite("ravager"),
+            sprite("ravager", {anim: "walk",}),
             scale(SCALE),
             anchor("center"),
             pos(at(16), at(17) + FIX),
@@ -345,7 +360,7 @@ scene("main", () => {
     })
     loop(5, () => {
         add([
-            sprite("ravager", {flipX: true}),
+            sprite("ravager", {anim: "walk", flipX: true}),
             scale(SCALE),
             anchor("center"),
             pos(at(0), at(15) + FIX),
@@ -358,7 +373,7 @@ scene("main", () => {
     })
     loop(5, () => {
         add([
-            sprite("ravager"),
+            sprite("ravager", {anim: "walk",}),
             scale(SCALE),
             anchor("center"),
             pos(at(16), at(13) + FIX),
@@ -371,7 +386,7 @@ scene("main", () => {
     })
     loop(5, () => {
         add([
-            sprite("ravager_wet", {flipX: true}),
+            sprite("ravager_wet", {anim: "walk", flipX: true}),
             scale(SCALE),
             anchor("center"),
             pos(at(0), at(11) + FIX),
@@ -384,7 +399,7 @@ scene("main", () => {
     })
     loop(5, () => {
         add([
-            sprite("ravager_wet"),
+            sprite("ravager_wet", {anim: "walk",}),
             scale(SCALE),
             anchor("center"),
             pos(at(16), at(9) + FIX),
@@ -397,7 +412,7 @@ scene("main", () => {
     })
     loop(5, () => {
         add([
-            sprite("ravager_wet", {flipX: true}),
+            sprite("ravager_wet", {anim: "walk", flipX: true}),
             scale(SCALE),
             anchor("center"),
             pos(at(0), at(7) + FIX),
@@ -410,7 +425,7 @@ scene("main", () => {
     })
     loop(5, () => {
         add([
-            sprite("ravager_wet"),
+            sprite("ravager_wet", {anim: "walk",}),
             scale(SCALE),
             anchor("center"),
             pos(at(16), at(5) + FIX),
